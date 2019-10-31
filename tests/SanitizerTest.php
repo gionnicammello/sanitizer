@@ -50,4 +50,29 @@ class testSanitizer extends TestCase
         $this->assertEquals($newValueValued,'notnull');
     }
 
+    public function testFilterReturnFilteredVariable()
+    {
+        $value='<p>value<br>value</p>';
+        $newValue=(new Sanitizer($value))->filter(FILTER_SANITIZE_STRING)->value();
+        $expected='valuevalue';
+        $this->assertEquals($expected,$newValue);
+    }
+
+
+    public function testFilterThrowExceptionIfWrongFilter()
+    {
+        $this->expectException(gionnicammello\Sanitizer\InvalidFilterException::class);
+        $value='<p>value<br>value</p>';
+        (new Sanitizer($value))->filter(FILTER_VALIDATE_EMAIL)->value();
+
+    }
+
+    public function testFilterOptionWorkAsExpected()
+    {
+        $value='\tcafé\n';
+        $newValue=(new Sanitizer($value))->filter(FILTER_SANITIZE_STRING,FILTER_FLAG_STRIP_HIGH)->value();
+        $expected='\tcaf\n';
+        $this->assertEquals($expected,$newValue);
+    }
+
 }
